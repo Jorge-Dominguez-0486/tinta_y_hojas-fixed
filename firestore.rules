@@ -1,0 +1,46 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function esAdmin() {
+      return request.auth != null && 
+             get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.rol == 'admin';
+    }
+    function esAutenticado() {
+      return request.auth != null;
+    }
+
+    match /libros/{id} {
+      allow read: if true;
+      allow write: if esAdmin();
+      match /resenas/{resenaId} {
+        allow read: if true;
+        allow create: if esAutenticado();
+        allow update, delete: if esAutenticado() && request.auth.uid == resource.data.usuarioId;
+      }
+    }
+
+    match /usuarios/{uid} {
+      allow read: if request.auth.uid == uid || esAdmin();
+      allow create: if esAutenticado();
+      allow update: if request.auth.uid == uid || esAdmin();
+      allow delete: if esAdmin();
+    }
+
+    match /pedidos/{id} {
+      allow read: if esAutenticado() && (request.auth.uid == resource.data.usuarioId || esAdmin());
+      allow create: if esAutenticado();
+      allow update: if esAdmin();
+    }
+
+    match /favoritos/{id} {
+      allow read, write: if esAutenticado() && resource.data.usuarioId == request.auth.uid;
+      allow create: if esAutenticado() && request.resource.data.usuarioId == request.auth.uid;
+    }
+
+    match /categorias/{id} { allow read: if true; allow write: if esAdmin(); }
+    match /autores/{id} { allow read: if true; allow write: if esAdmin(); }
+    match /editoriales/{id} { allow read: if true; allow write: if esAdmin(); }
+    match /idiomas/{id} { allow read: if true; allow write: if esAdmin(); }
+    match /proveedores/{id} { allow read, write: if esAdmin(); }
+  }
+}

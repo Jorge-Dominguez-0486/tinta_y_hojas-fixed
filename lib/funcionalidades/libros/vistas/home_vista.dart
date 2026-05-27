@@ -359,15 +359,18 @@ class _HomeVistaState extends State<HomeVista> {
               child: Center(child: Text('No hay libros disponibles')),
             )
           else
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            child: GridView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3, childAspectRatio: 0.55, crossAxisSpacing: 6, mainAxisSpacing: 6,
-              ),
-              itemCount: libros.length,
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              child: GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                  childAspectRatio: 0.55,
+                  crossAxisSpacing: 6,
+                  mainAxisSpacing: 6,
+                ),
+                itemCount: libros.length,
                 itemBuilder: (_, index) {
                   final libro = libros[index];
                   return TarjetaLibro(

@@ -11,31 +11,51 @@ class PedidoProvider extends ChangeNotifier {
   String? _mensajeError;
   StreamSubscription<QuerySnapshot>? _subscription;
 
+  String? _uidActivo;
+
   List<PedidoModelo> get pedidos => _pedidos;
   bool get cargando => _cargando;
   String? get mensajeError => _mensajeError;
 
   void escucharPedidos(String usuarioId) {
+    if (_uidActivo == usuarioId && _subscription != null) return;
+
+    _uidActivo = usuarioId;
     _subscription?.cancel();
+    _subscription = null;
+
     _cargando = true;
+    _mensajeError = null;
     notifyListeners();
 
     _subscription = _firestore
         .collection('pedidos')
         .where('usuarioId', isEqualTo: usuarioId)
-        .orderBy('createdAt', descending: true)
         .snapshots()
         .listen(
           (snapshot) {
-            _pedidos = snapshot.docs
-                .map((doc) => PedidoModelo.fromMap(doc.data()))
+            final lista = snapshot.docs
+                .map((doc) {
+                  try {
+                    return PedidoModelo.fromMap(
+                      doc.data(),
+                    );
+                  } catch (_) {
+                    return null;
+                  }
+                })
+                .whereType<PedidoModelo>()
                 .toList();
+
+            lista.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+
+            _pedidos = lista;
             _cargando = false;
             _mensajeError = null;
             notifyListeners();
           },
           onError: (e) {
-            _mensajeError = 'Error al cargar pedidos: $e';
+            _mensajeError = e.toString();
             _cargando = false;
             notifyListeners();
           },
@@ -43,25 +63,41 @@ class PedidoProvider extends ChangeNotifier {
   }
 
   void escucharTodosLosPedidos() {
+    _uidActivo = null;
     _subscription?.cancel();
+    _subscription = null;
+
     _cargando = true;
+    _mensajeError = null;
     notifyListeners();
 
     _subscription = _firestore
         .collection('pedidos')
-        .orderBy('createdAt', descending: true)
         .snapshots()
         .listen(
           (snapshot) {
-            _pedidos = snapshot.docs
-                .map((doc) => PedidoModelo.fromMap(doc.data()))
+            final lista = snapshot.docs
+                .map((doc) {
+                  try {
+                    return PedidoModelo.fromMap(
+                      doc.data(),
+                    );
+                  } catch (_) {
+                    return null;
+                  }
+                })
+                .whereType<PedidoModelo>()
                 .toList();
+
+            lista.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+
+            _pedidos = lista;
             _cargando = false;
             _mensajeError = null;
             notifyListeners();
           },
           onError: (e) {
-            _mensajeError = 'Error al cargar pedidos: $e';
+            _mensajeError = e.toString();
             _cargando = false;
             notifyListeners();
           },
@@ -86,6 +122,16 @@ class PedidoProvider extends ChangeNotifier {
       _mensajeError = 'Error al actualizar estado: $e';
       notifyListeners();
     }
+  }
+
+  void limpiar() {
+    _subscription?.cancel();
+    _subscription = null;
+    _uidActivo = null;
+    _pedidos = [];
+    _cargando = false;
+    _mensajeError = null;
+    notifyListeners();
   }
 
   @override

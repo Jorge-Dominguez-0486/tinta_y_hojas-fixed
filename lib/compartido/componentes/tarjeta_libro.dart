@@ -22,12 +22,12 @@ class TarjetaLibro extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(14),
           boxShadow: [
             BoxShadow(
-              color: Constantes.vinoDark.withAlpha(16),
-              blurRadius: 6,
-              offset: const Offset(0, 2),
+              color: Constantes.vinoDark.withAlpha(22),
+              blurRadius: 10,
+              offset: const Offset(0, 3),
             ),
           ],
         ),
@@ -35,35 +35,54 @@ class TarjetaLibro extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            AspectRatio(
-              aspectRatio: 0.7,
-              child: Hero(
-                tag: 'libro_${libro.id}',
-                child: libro.portadaUrl.isNotEmpty
-                    ? CachedNetworkImage(
-                        imageUrl: libro.portadaUrl,
-                        fit: BoxFit.cover,
-                        width: double.infinity,
-                        placeholder: (_, __) => _placeholder(),
-                        errorWidget: (_, __, ___) => _placeholder(),
-                      )
-                    : _placeholder(),
-              ),
-            ),
-            if (libro.stock == 0)
-              Container(
-                width: double.infinity,
-                color: Colors.black87,
-                padding: const EdgeInsets.symmetric(vertical: 2),
-                child: const Text(
-                  'Agotado',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.white, fontSize: 8, fontWeight: FontWeight.w600),
+            // Portada con ratio fijo y badge de stock
+            Stack(
+              children: [
+                AspectRatio(
+                  aspectRatio: 0.72,
+                  child: Hero(
+                    tag: 'libro_${libro.id}',
+                    child: libro.portadaUrl.isNotEmpty
+                        ? CachedNetworkImage(
+                            imageUrl: libro.portadaUrl,
+                            fit: BoxFit.cover,
+                            width: double.infinity,
+                            placeholder: (_, __) => _placeholder(),
+                            errorWidget: (_, __, ___) => _placeholder(),
+                          )
+                        : _placeholder(),
+                  ),
                 ),
-              ),
+                // Badge agotado
+                if (libro.stock == 0)
+                  Positioned(
+                    top: 8,
+                    left: 8,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 7,
+                        vertical: 3,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.black54,
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: const Text(
+                        'Agotado',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 9,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+            // Info del libro
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(7, 6, 7, 6),
+                padding: const EdgeInsets.fromLTRB(9, 8, 9, 8),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -72,25 +91,45 @@ class TarjetaLibro extends StatelessWidget {
                       style: const TextStyle(
                         fontFamily: 'Playfair Display',
                         fontWeight: FontWeight.bold,
-                        fontSize: 11,
+                        fontSize: 13,
                         color: Constantes.textDark,
-                        height: 1.15,
+                        height: 1.2,
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(height: 2),
+                    const SizedBox(height: 3),
                     Text(
                       libro.autorNombre,
                       style: TextStyle(
                         fontFamily: 'Inter',
-                        fontSize: 9,
-                        color: Constantes.textDark.withAlpha(140),
+                        fontSize: 11,
+                        color: Constantes.textDark.withAlpha(160),
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
+                    const SizedBox(height: 4),
+                    // Estrellas
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.star_rounded,
+                          size: 13,
+                          color: Colors.amber,
+                        ),
+                        const SizedBox(width: 2),
+                        Text(
+                          libro.calificacion.toStringAsFixed(1),
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: Constantes.textDark.withAlpha(180),
+                          ),
+                        ),
+                      ],
+                    ),
                     const Spacer(),
+                    // Precio + botón agregar
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -100,7 +139,7 @@ class TarjetaLibro extends StatelessWidget {
                             '\$${libro.precio.toStringAsFixed(0)}',
                             style: const TextStyle(
                               fontWeight: FontWeight.bold,
-                              fontSize: 12,
+                              fontSize: 14,
                               color: Constantes.vinoPrimary,
                               fontFamily: 'Inter',
                             ),
@@ -110,13 +149,17 @@ class TarjetaLibro extends StatelessWidget {
                           GestureDetector(
                             onTap: onAgregarCarrito,
                             child: Container(
-                              width: 24,
-                              height: 24,
-                              decoration: BoxDecoration(
+                              width: 30,
+                              height: 30,
+                              decoration: const BoxDecoration(
                                 color: Constantes.vinoPrimary,
                                 shape: BoxShape.circle,
                               ),
-                              child: const Icon(Icons.add, color: Colors.white, size: 14),
+                              child: const Icon(
+                                Icons.add,
+                                color: Colors.white,
+                                size: 18,
+                              ),
                             ),
                           ),
                       ],
@@ -137,8 +180,8 @@ class TarjetaLibro extends StatelessWidget {
       child: Center(
         child: Icon(
           Icons.menu_book_rounded,
-          size: 28,
-          color: Constantes.vinoSoft.withAlpha(100),
+          size: 36,
+          color: Constantes.vinoSoft.withAlpha(120),
         ),
       ),
     );

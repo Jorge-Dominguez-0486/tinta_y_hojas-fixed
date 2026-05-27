@@ -27,7 +27,7 @@ class TarjetaCarritoItem extends StatelessWidget {
         padding: const EdgeInsets.only(right: 20),
         decoration: BoxDecoration(
           color: Colors.red[600],
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(16),
         ),
         child: const Icon(Icons.delete, color: Colors.white, size: 28),
       ),
@@ -36,55 +36,57 @@ class TarjetaCarritoItem extends StatelessWidget {
         builder: (ctx) => AlertDialog(
           title: const Text('Eliminar'),
           content: const Text('¿Eliminar este libro del carrito?'),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancelar')),
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: const Text('Cancelar'),
+            ),
             TextButton(
               onPressed: () => Navigator.pop(ctx, true),
-              child: const Text('Eliminar', style: TextStyle(color: Colors.red)),
+              child: const Text(
+                'Eliminar',
+                style: TextStyle(color: Colors.red),
+              ),
             ),
           ],
         ),
       ),
       onDismissed: (_) => onEliminar?.call(),
       child: Card(
-        color: Constantes.cream,
-        elevation: 1,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+        color: Colors.white,
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: BorderSide(
+            color: Constantes.vinoPrimary.withAlpha(30),
+            width: 1,
+          ),
+        ),
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
         child: Padding(
-          padding: const EdgeInsets.all(10),
+          padding: const EdgeInsets.all(12),
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Portada
               ClipRRect(
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(10),
                 child: item.portadaUrl.isNotEmpty
                     ? CachedNetworkImage(
                         imageUrl: item.portadaUrl,
-                        width: 60,
-                        height: 80,
+                        width: 65,
+                        height: 88,
                         fit: BoxFit.cover,
-                        placeholder: (_, __) => Container(
-                          width: 60,
-                          height: 80,
-                          color: Colors.grey[200],
-                          child: const Icon(Icons.book, size: 28, color: Colors.grey),
-                        ),
-                        errorWidget: (_, __, ___) => Container(
-                          width: 60,
-                          height: 80,
-                          color: Colors.grey[200],
-                          child: const Icon(Icons.book, size: 28, color: Colors.grey),
-                        ),
+                        placeholder: (_, __) => _placeholder(),
+                        errorWidget: (_, __, ___) => _placeholder(),
                       )
-                    : Container(
-                        width: 60,
-                        height: 80,
-                        color: Colors.grey[200],
-                        child: const Icon(Icons.book, size: 28, color: Colors.grey),
-                      ),
+                    : _placeholder(),
               ),
               const SizedBox(width: 12),
+              // Info del libro
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -92,9 +94,9 @@ class TarjetaCarritoItem extends StatelessWidget {
                     Text(
                       item.titulo,
                       style: const TextStyle(
-                        fontFamily: 'Inter',
+                        fontFamily: 'Playfair Display',
                         fontSize: 14,
-                        fontWeight: FontWeight.w600,
+                        fontWeight: FontWeight.bold,
                         color: Constantes.textDark,
                       ),
                       maxLines: 2,
@@ -109,68 +111,137 @@ class TarjetaCarritoItem extends StatelessWidget {
                         color: Constantes.vinoSoft,
                       ),
                     ),
-                    const SizedBox(height: 2),
-                    Text(
-                      'Subtotal: \$${item.subtotal.toStringAsFixed(2)}',
-                      style: const TextStyle(
-                        fontFamily: 'Inter',
-                        fontSize: 13,
-                        fontWeight: FontWeight.bold,
-                        color: Constantes.vinoPrimary,
-                      ),
+                    const SizedBox(height: 8),
+                    // Fila inferior: subtotal + controles
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        // Subtotal
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Subtotal',
+                              style: TextStyle(
+                                fontFamily: 'Inter',
+                                fontSize: 10,
+                                color: Constantes.vinoSoft,
+                              ),
+                            ),
+                            Text(
+                              '\$${item.subtotal.toStringAsFixed(2)}',
+                              style: const TextStyle(
+                                fontFamily: 'Inter',
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                                color: Constantes.vinoPrimary,
+                              ),
+                            ),
+                          ],
+                        ),
+                        // Controles de cantidad en fila horizontal
+                        Row(
+                          children: [
+                            // Botón eliminar
+                            GestureDetector(
+                              onTap: onEliminar,
+                              child: Container(
+                                padding: const EdgeInsets.all(6),
+                                decoration: BoxDecoration(
+                                  color: Colors.red[50],
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Icon(
+                                  Icons.delete_outline,
+                                  color: Colors.red[400],
+                                  size: 16,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            // Contador con estilo pill
+                            Container(
+                              decoration: BoxDecoration(
+                                color: Constantes.beige,
+                                borderRadius: BorderRadius.circular(24),
+                                border: Border.all(
+                                  color: Constantes.vinoPrimary.withAlpha(50),
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  InkWell(
+                                    onTap: onDisminuir,
+                                    borderRadius: BorderRadius.circular(24),
+                                    child: Container(
+                                      width: 30,
+                                      height: 30,
+                                      alignment: Alignment.center,
+                                      child: const Icon(
+                                        Icons.remove,
+                                        size: 15,
+                                        color: Constantes.vinoPrimary,
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 28,
+                                    child: Text(
+                                      '${item.cantidad}',
+                                      textAlign: TextAlign.center,
+                                      style: const TextStyle(
+                                        fontFamily: 'Inter',
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                        color: Constantes.textDark,
+                                      ),
+                                    ),
+                                  ),
+                                  InkWell(
+                                    onTap: onAumentar,
+                                    borderRadius: BorderRadius.circular(24),
+                                    child: Container(
+                                      width: 30,
+                                      height: 30,
+                                      alignment: Alignment.center,
+                                      decoration: const BoxDecoration(
+                                        color: Constantes.vinoPrimary,
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: const Icon(
+                                        Icons.add,
+                                        size: 15,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                   ],
                 ),
-              ),
-              const SizedBox(width: 8),
-              Column(
-                children: [
-                  InkWell(
-                    onTap: onAumentar,
-                    child: Container(
-                      padding: const EdgeInsets.all(4),
-                      decoration: const BoxDecoration(
-                        color: Constantes.vinoPrimary,
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(Icons.add, size: 16, color: Colors.white),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 4),
-                    child: Text(
-                      '${item.cantidad}',
-                      style: const TextStyle(
-                        fontFamily: 'Inter',
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  InkWell(
-                    onTap: onDisminuir,
-                    child: Container(
-                      padding: const EdgeInsets.all(4),
-                      decoration: BoxDecoration(
-                        color: Constantes.vinoSoft.withAlpha(150),
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(Icons.remove, size: 16, color: Colors.white),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(width: 4),
-              IconButton(
-                icon: const Icon(Icons.delete_outline, color: Colors.red, size: 20),
-                onPressed: onEliminar,
-                padding: EdgeInsets.zero,
-                constraints: const BoxConstraints(),
               ),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget _placeholder() {
+    return Container(
+      width: 65,
+      height: 88,
+      decoration: BoxDecoration(
+        color: Colors.grey[100],
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: const Icon(Icons.book, size: 28, color: Colors.grey),
     );
   }
 }

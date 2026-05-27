@@ -9,6 +9,7 @@ class PedidoModelo {
   final double total;
   final String estado;
   final String metodoPago;
+  final String direccion;
   final DateTime createdAt;
 
   PedidoModelo({
@@ -19,6 +20,7 @@ class PedidoModelo {
     this.total = 0.0,
     this.estado = 'pendiente',
     this.metodoPago = '',
+    this.direccion = '',
     required this.createdAt,
   });
 
@@ -31,6 +33,7 @@ class PedidoModelo {
       'total': total,
       'estado': estado,
       'metodoPago': metodoPago,
+      'direccion': direccion,
       'createdAt': Timestamp.fromDate(createdAt),
     };
   }
@@ -48,6 +51,7 @@ class PedidoModelo {
       total: (map['total'] ?? 0).toDouble(),
       estado: (map['estado'] ?? 'pendiente').toString(),
       metodoPago: (map['metodoPago'] ?? '').toString(),
+      direccion: (map['direccion'] ?? '').toString(),
       createdAt: (map['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
     );
   }
@@ -60,6 +64,7 @@ class PedidoModelo {
     double? total,
     String? estado,
     String? metodoPago,
+    String? direccion,
     DateTime? createdAt,
   }) {
     return PedidoModelo(
@@ -70,6 +75,7 @@ class PedidoModelo {
       total: total ?? this.total,
       estado: estado ?? this.estado,
       metodoPago: metodoPago ?? this.metodoPago,
+      direccion: direccion ?? this.direccion,
       createdAt: createdAt ?? this.createdAt,
     );
   }

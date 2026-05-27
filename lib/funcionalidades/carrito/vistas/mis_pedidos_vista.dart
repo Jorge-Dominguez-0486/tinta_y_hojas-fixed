@@ -50,35 +50,67 @@ class _MisPedidosVistaState extends State<MisPedidosVista> {
       appBar: AppBar(title: const Text('Mis Pedidos')),
       body: pedidoProv.cargando
           ? const Cargando(mensaje: 'Cargando pedidos...')
-          : pedidoProv.pedidos.isEmpty
+          : pedidoProv.mensajeError != null
               ? Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.receipt_long_outlined, size: 80, color: Constantes.vinoSoft.withAlpha(128)),
-                      const SizedBox(height: 16),
-                      const Text(
-                        'No tienes pedidos aún',
-                        style: TextStyle(
-                          fontFamily: 'Playfair Display',
-                          fontSize: 20,
-                          color: Constantes.textDark,
+                  child: Padding(
+                    padding: const EdgeInsets.all(32),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.error_outline, size: 64, color: Colors.red[300]),
+                        const SizedBox(height: 16),
+                        Text(
+                          'Error al cargar pedidos',
+                          style: TextStyle(fontFamily: 'Playfair Display', fontSize: 18, color: Constantes.textDark),
+                          textAlign: TextAlign.center,
                         ),
+                        const SizedBox(height: 8),
+                          Text(
+                            pedidoProv.mensajeError!,
+                            style: TextStyle(fontFamily: 'Inter', fontSize: 13, color: Constantes.textDark.withAlpha(180)),
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 24),
+                          ElevatedButton.icon(
+                            onPressed: () {
+                              final user = FirebaseAuth.instance.currentUser;
+                              if (user != null) {
+                                context.read<PedidoProvider>().escucharPedidos(user.uid);
+                              }
+                            },
+                            icon: const Icon(Icons.refresh, size: 18),
+                            label: const Text('Reintentar'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Constantes.vinoPrimary,
+                              foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                            ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'Tus compras aparecerán aquí',
-                        style: TextStyle(
-                          fontFamily: 'Inter',
-                          fontSize: 14,
-                          color: Constantes.textDark.withAlpha(180),
+                    ),
+                  )
+                : pedidoProv.pedidos.isEmpty
+                    ? Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.receipt_long_outlined, size: 80, color: Constantes.vinoSoft.withAlpha(128)),
+                            const SizedBox(height: 16),
+                            const Text(
+                              'No tienes pedidos aún',
+                              style: TextStyle(fontFamily: 'Playfair Display', fontSize: 20, color: Constantes.textDark),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              'Tus compras aparecerán aquí',
+                              style: TextStyle(fontFamily: 'Inter', fontSize: 14, color: Constantes.textDark.withAlpha(180)),
+                            ),
+                          ],
                         ),
-                      ),
-                    ],
-                  ),
-                )
-              : ListView.builder(
-                  padding: const EdgeInsets.all(16),
+                      )
+                    : ListView.builder(
+                        padding: const EdgeInsets.all(16),
                   itemCount: pedidoProv.pedidos.length,
                   itemBuilder: (_, index) {
                     final pedido = pedidoProv.pedidos[index];
@@ -199,6 +231,24 @@ class _MisPedidosVistaState extends State<MisPedidosVista> {
                                   ],
                                 ),
                               )),
+                          if (pedido.direccion.isNotEmpty)
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 4),
+                              child: Row(
+                                children: [
+                                  const Icon(Icons.location_on, size: 13, color: Constantes.vinoSoft),
+                                  const SizedBox(width: 4),
+                                  Expanded(
+                                    child: Text(
+                                      'Envío: ${pedido.direccion}',
+                                      style: TextStyle(fontFamily: 'Inter', fontSize: 11, color: Constantes.textDark.withAlpha(150)),
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                           Padding(
                             padding: const EdgeInsets.only(top: 4),
                             child: Row(

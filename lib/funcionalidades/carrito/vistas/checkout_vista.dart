@@ -18,12 +18,19 @@ class CheckoutVista extends StatefulWidget {
 class _CheckoutVistaState extends State<CheckoutVista> {
   String _metodoPago = 'Tarjeta de crédito';
   bool _confirmando = false;
+  final _direccionCtrl = TextEditingController();
 
   final _metodosPago = [
     'Tarjeta de crédito',
     'Efectivo al entregar',
     'Transferencia',
   ];
+
+  @override
+  void dispose() {
+    _direccionCtrl.dispose();
+    super.dispose();
+  }
 
   Future<void> _confirmarCompra() async {
     final user = FirebaseAuth.instance.currentUser;
@@ -35,6 +42,7 @@ class _CheckoutVistaState extends State<CheckoutVista> {
       await context.read<CarritoProvider>().confirmarPedido(
             usuarioId: user.uid,
             metodoPago: _metodoPago,
+            direccion: _direccionCtrl.text.trim(),
           );
 
       if (!mounted) return;
@@ -277,6 +285,33 @@ class _CheckoutVistaState extends State<CheckoutVista> {
                           ),
                         ),
                       )),
+                  const SizedBox(height: 24),
+                  const Text(
+                    'Dirección de envío',
+                    style: TextStyle(
+                      fontFamily: 'Playfair Display',
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Constantes.textDark,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  TextFormField(
+                    controller: _direccionCtrl,
+                    decoration: InputDecoration(
+                      labelText: 'Dirección',
+                      hintText: 'Calle, número, colonia, ciudad, código postal',
+                      prefixIcon: const Icon(Icons.location_on_outlined),
+                      filled: true,
+                      fillColor: Constantes.cream,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide.none,
+                      ),
+                    ),
+                    maxLines: 2,
+                    textInputAction: TextInputAction.done,
+                  ),
                   const SizedBox(height: 24),
                   SizedBox(
                     width: double.infinity,

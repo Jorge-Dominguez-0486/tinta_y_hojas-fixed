@@ -93,7 +93,7 @@ class CarritoVista extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
                   decoration: BoxDecoration(
-                    color: Constantes.cream,
+                    color: Colors.white,
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withAlpha(26),
@@ -107,64 +107,42 @@ class CarritoVista extends StatelessWidget {
                     child: Column(
                       children: [
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            const Text(
-                              'Subtotal',
-                              style: TextStyle(
-                                fontFamily: 'Inter',
-                                fontSize: 16,
-                                color: Constantes.textDark,
+                            Expanded(
+                              child: OutlinedButton.icon(
+                                onPressed: () => context.go('/home'),
+                                icon: const Icon(Icons.arrow_back, size: 18),
+                                label: const Text(
+                                  'Seguir comprando',
+                                  style: TextStyle(fontFamily: 'Inter', fontSize: 13, fontWeight: FontWeight.w600),
+                                ),
+                                style: OutlinedButton.styleFrom(
+                                  foregroundColor: Constantes.vinoSoft,
+                                  side: BorderSide(color: Constantes.vinoSoft.withAlpha(100)),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                  padding: const EdgeInsets.symmetric(vertical: 12),
+                                ),
                               ),
                             ),
-                            Text(
-                              '${formato.format(carrito.total)} MXN',
-                              style: const TextStyle(
-                                fontFamily: 'Inter',
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: Constantes.vinoPrimary,
+                            const SizedBox(width: 10),
+                            Expanded(
+                              flex: 2,
+                              child: ElevatedButton.icon(
+                                onPressed: () => context.go('/checkout'),
+                                icon: const Icon(Icons.shopping_cart_checkout, size: 18),
+                                label: Text(
+                                  'Pagar ${formato.format(carrito.total)} MXN',
+                                  style: const TextStyle(fontFamily: 'Inter', fontSize: 13, fontWeight: FontWeight.w600),
+                                ),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Constantes.vinoPrimary,
+                                  foregroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                  padding: const EdgeInsets.symmetric(vertical: 12),
+                                ),
                               ),
                             ),
                           ],
-                        ),
-                        const SizedBox(height: 12),
-                        SizedBox(
-                          width: double.infinity,
-                          child: OutlinedButton(
-                            onPressed: () => context.go('/home'),
-                            style: OutlinedButton.styleFrom(
-                              foregroundColor: Constantes.vinoPrimary,
-                              side: const BorderSide(color: Constantes.vinoPrimary),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              padding: const EdgeInsets.symmetric(vertical: 14),
-                            ),
-                            child: const Text(
-                              'Continuar comprando',
-                              style: TextStyle(fontFamily: 'Inter', fontSize: 15, fontWeight: FontWeight.w600),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        SizedBox(
-                          width: double.infinity,
-                          child: ElevatedButton(
-                            onPressed: () => context.go('/checkout'),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Constantes.vinoPrimary,
-                              foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              padding: const EdgeInsets.symmetric(vertical: 14),
-                            ),
-                            child: const Text(
-                              'Confirmar pedido',
-                              style: TextStyle(fontFamily: 'Inter', fontSize: 15, fontWeight: FontWeight.w600),
-                            ),
-                          ),
                         ),
                       ],
                     ),

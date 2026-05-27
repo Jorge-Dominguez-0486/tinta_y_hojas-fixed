@@ -98,6 +98,7 @@ class CarritoProvider extends ChangeNotifier {
   Future<void> confirmarPedido({
     required String usuarioId,
     required String metodoPago,
+    String direccion = '',
   }) async {
     _cargando = true;
     notifyListeners();
@@ -111,6 +112,7 @@ class CarritoProvider extends ChangeNotifier {
         total: total,
         estado: 'pendiente',
         metodoPago: metodoPago,
+        direccion: direccion,
         createdAt: DateTime.now(),
       );
 
